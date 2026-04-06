@@ -460,3 +460,16 @@ def post_to_blogger(title, content, image_url, dynamic_tags):
         print(f"✅ 포스팅 성공! 태그: {labels} | 평점: {rating_val} ({rates_count} rates)")
     except Exception as e:
         print(f"❌ Blogger 포스팅 실패: {e}")
+
+if __name__ == "__main__":
+    print(f"\n{'='*70}\n🚀 Vibe Coding Auto Post 시작\n{'='*70}\n")
+    topic = get_vibe_coding_topic()
+    title, body, image_prompt, dynamic_tags = generate_content(topic)
+    
+    if title and body:
+        # 이미지 생성 및 업로드
+        final_image_url = generate_and_upload_image(image_prompt)
+        # 블로거에 최종 포스팅
+        post_to_blogger(title, body, final_image_url, dynamic_tags)
+    else:
+        print("\n❌ 콘텐츠 생성에 실패했습니다.")
