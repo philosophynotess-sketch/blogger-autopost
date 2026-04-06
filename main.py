@@ -385,10 +385,9 @@ def post_to_blogger(title, content, image_url, dynamic_tags):
     labels = ["AI Coding", "VibeCoding"] + dynamic_tags
     labels = list(dict.fromkeys(labels))[:6]
     
-    # 🎯 이미지 요청사항 반영: 랜덤 별점, 리뷰 수, 스코어 생성
+    # 🎯 요청사항 반영: Vibe Score 삭제, 랜덤 별점(4.7~5.0), 랜덤 리뷰 수(708~4976)
     rating_val = round(random.uniform(4.7, 5.0), 1)
-    rates_count = random.randint(150, 999)
-    score_val = random.randint(700, 4898)
+    rates_count = random.randint(708, 4976)
     
     styled_content = f"""
     <style>
@@ -400,7 +399,7 @@ def post_to_blogger(title, content, image_url, dynamic_tags):
       .vibe-content li {{ margin-bottom: 10px; font-size: 16px; }}
       .vibe-content code {{ background-color: #e9ecef; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; color: #d63384; font-size: 0.95em; }}
       
-      /* 스크린샷 반영: 상단/하단 푸른색 Callout Box 디자인 */
+      /* 푸른색 안내 박스 디자인 */
       .vibe-callout {{
         background-color: #f4f6fd;
         padding: 18px 25px;
@@ -411,38 +410,26 @@ def post_to_blogger(title, content, image_url, dynamic_tags):
         line-height: 1.6;
       }}
       
-      /* 스크린샷 반영: 하단 별점 & 스코어 컨테이너 (우측 정렬) */
+      /* 하단 별점 영역 (우측 정렬) */
       .vibe-footer-container {{
-        display: flex;
-        justify-content: flex-end; /* 우측 정렬 */
-        align-items: center;
-        gap: 30px; /* 별점과 스코어 사이 간격 */
+        text-align: right;
         margin-top: 60px;
         padding-top: 25px;
         border-top: 1px solid #eaeaea;
-        flex-wrap: wrap;
       }}
       
       /* 별점 텍스트 색상 및 스타일 */
       .vibe-rating {{
-        color: #ff9800; /* 오렌지색 별 */
-        font-size: 1.1em;
+        color: #fbc02d; /* 노란색 별 (이미지에 맞춤) */
+        font-size: 1.2em;
+        letter-spacing: 2px;
       }}
       .vibe-rating span {{
         color: #555;
-        font-weight: 600;
-        margin-left: 5px;
-      }}
-      
-      /* Vibe Score 스타일 */
-      .vibe-score {{
-        font-size: 1.1em;
-        color: #555;
-      }}
-      .score-highlight {{
-        font-size: 1.4em;
-        font-weight: 900;
-        color: #1a73e8; /* 푸른색 강조 */
+        font-weight: 700;
+        font-size: 0.9em;
+        margin-left: 8px;
+        letter-spacing: 0;
       }}
     </style>
     
@@ -462,9 +449,6 @@ def post_to_blogger(title, content, image_url, dynamic_tags):
         <div class="vibe-rating">
           ⭐⭐⭐⭐⭐ <span>{rating_val} / {rates_count} rates</span>
         </div>
-        <div class="vibe-score">
-          <strong>Vibe Score</strong>: <span class="score-highlight">{score_val}</span> 점
-        </div>
       </div>
     </div>
     """
@@ -473,17 +457,6 @@ def post_to_blogger(title, content, image_url, dynamic_tags):
     
     try:
         service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
-        print(f"✅ 포스팅 성공! 태그: {labels} | 평점: {rating_val} | Vibe Score: {score_val}")
+        print(f"✅ 포스팅 성공! 태그: {labels} | 평점: {rating_val} ({rates_count} rates)")
     except Exception as e:
         print(f"❌ Blogger 포스팅 실패: {e}")
-
-if __name__ == "__main__":
-    print(f"\n{'='*70}\n🚀 Vibe Coding Auto Post 시작\n{'='*70}\n")
-    topic = get_vibe_coding_topic()
-    title, body, image_prompt, dynamic_tags = generate_content(topic)
-    
-    if title and body:
-        final_image_url = generate_and_upload_image(image_prompt)
-        post_to_blogger(title, body, final_image_url, dynamic_tags)
-    else:
-        print("\n❌ 콘텐츠 생성에 실패했습니다.")
