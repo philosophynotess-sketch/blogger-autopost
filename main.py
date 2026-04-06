@@ -24,9 +24,9 @@ IMGBB_API_KEY = os.environ.get("IMGBB_API_KEY")
 GEMINI_TEXT_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
 
 
-# ====================== 2026년 3월 기준 가장 터지는 Vibe Coding Fallback 풀 (60개) ======================
-# 🚨 주의: 파이썬은 이 부분의 줄 맞춤(들여쓰기)에 엄청 예민합니다. 아래와 같이 똑같이 맞춰야 합니다.
+# ====================== 총 150개의 Vibe Coding 자동화 포스팅 풀 ======================
 FALLBACK_TOPICS = [
+    # --- 기존 주제 (60개) ---
     "Claude Code Opus 4.6으로 하루 만에 MVP 만들기: Agent Teams 실전 가이드",
     "Cursor IDE 2026 완전 정복: Composer 모드로 3배 빠른 풀스택 개발",
     "Windsurf AI IDE vs Cursor: 2026년 어떤 걸 골라야 할까? 가격·성능 비교",
@@ -57,7 +57,7 @@ FALLBACK_TOPICS = [
     "Vibe Coding에서 Production 코드로 넘어가기: 보안·아키텍처 실전 팁",
     "Windsurf Cascade AI Agent로 병렬 개발하는 실전 워크플로우",
     "Claude Code로 기술 부채 없이 빠르게 MVP 출시하는 단계별 가이드",
-    "Antigravity + Claude Opus 조합으로 무로 최고 성능 내는 법",
+    "Antigravity + Claude Opus 조합으로 무료로 최고 성능 내는 법",
     "Cursor에서 AI로 전체 리팩토링 하는 단계별 실전 가이드",
     "2026년 개발자 필수 AI 스택: Cursor + Claude Code + Lovable 조합",
     "Lovable로 만든 앱을 실제 수익 나는 Micro-SaaS로 키우는 법",
@@ -86,8 +86,9 @@ FALLBACK_TOPICS = [
     "2026 AI 코딩 트렌드: Human-in-the-Loop vs Fully Agentic",
     "Claude Code로 SWE-bench 고득점 내는 실전 프롬프트 전략",
     "Lovable로 빠른 프로토타입 검증 후 Cursor로 프로덕션 전환하기",
-    "2026 개발자 생산성 도구 스택: Claude Code + Cursor + Lovable 조합"
-    # --- 1. 일반인을 위한 AI 사용법 (Daily AI & Life Hacks) ---
+    "2026 개발자 생산성 도구 스택: Claude Code + Cursor + Lovable 조합",
+    
+    # --- 1. 일반인을 위한 AI 사용법 ---
     "2026년 필수 AI 비서 세팅 가이드: 제미나이 3.1과 클로드 완벽 비교",
     "코딩 1도 모르는 직장인을 위한 엑셀 AI 완전 자동화 실전 팁",
     "하루 1시간 아껴주는 마법의 AI 프롬프트 작성 공식 5가지",
@@ -105,7 +106,7 @@ FALLBACK_TOPICS = [
     "내 목소리만 10분 학습시켜서 AI 오디오북 만드는 초간단 가이드",
     "구글 워크스페이스 코파일럿(Copilot) 실무 200% 활용 백서",
 
-    # --- 2. AI 활용 블로그 자동화 및 수익화 (Monetization & Automation) ---
+    # --- 2. AI 활용 블로그 자동화 및 수익화 ---
     "AI로 워드프레스 무인 자동화 수익형 블로그 세팅하기: A to Z",
     "하루 10분 투자로 월 100만원 버는 AI 뉴스레터 자동화 수익 모델",
     "제미나이 3.1 Pro로 구글 SEO 1위 먹는 상위 노출 블로그 포스팅 비법",
@@ -126,7 +127,7 @@ FALLBACK_TOPICS = [
     "어필리에이트 마케팅 + AI 자동 리뷰로 수동적 수익(Passive Income) 극대화하기",
     "내 웹사이트에 AI 챗봇 붙여서 CS 줄이고 구매 전환율 3배 높이는 법",
 
-    # --- 3. Vibe Coding & No-code (자연어 코딩) ---
+    # --- 3. Vibe Coding & No-code ---
     "프롬프트가 곧 코드다! 2026년 Vibe Coding 필수 용어 완전 정복",
     "기획자도 앱을 만든다? 자연어 코딩으로 Todo 앱 10분 만에 배포하기",
     "마우스만 딸깍! Cursor IDE에서 자연어로 복잡한 버그 수정하는 법",
@@ -146,7 +147,7 @@ FALLBACK_TOPICS = [
     "리액트 네이티브 모바일 앱 개발, 이제 프롬프트 3번이면 스토어 등록까지 끝납니다",
     "복잡한 백엔드 API 설계, 자연어로 DB 스키마부터 스웨거(Swagger)까지 자동 생성",
 
-    # --- 4. 최신 개발자 트렌드 & 오픈소스 툴 (Developer & Open Source) ---
+    # --- 4. 최신 개발자 트렌드 & 오픈소스 툴 ---
     "2026년 깃허브 스타 1위! 로컬 AI 모델 구동기 Ollama 2.0 실전 가이드",
     "vLLM과 SGLang: GPU 서버 터질 걱정 없는 초고속 오픈소스 추론 엔진 세팅법",
     "ComfyUI 워크플로우 완전 정복: 노드 기반 AI 이미지 생성의 끝판왕",
@@ -167,7 +168,7 @@ FALLBACK_TOPICS = [
     "무거운 일렉트론(Electron)은 가라! Tauri로 초경량 데스크톱 앱 만들기",
     "개발자 포트폴리오 사이트, 오픈소스 정적 생성기(Astro)로 하루 만에 끝내기",
 
-    # --- 5. AI 기술 트렌드 & 딥다이브 (Deep Dive into AI Tech) ---
+    # --- 5. AI 기술 트렌드 & 딥다이브 ---
     "멀티 에이전트 시스템(Multi-Agent): AI끼리 토론해서 최고의 결과물 도출하는 법",
     "오토 GPT(AutoGPT) 그 후 3년, 자율형 AI 에이전트는 지금 어디까지 왔나?",
     "RAG(검색 증강 생성) 초보자 가이드: AI가 헛소리(할루시네이션) 안 하게 만들기",
@@ -226,7 +227,6 @@ def get_vibe_coding_topic():
 
 # ====================== Hugging Face 이미지 생성 ======================
 def generate_image_hf(prompt):
-    """Hugging Face API를 사용하되, 로딩(503) 에러와 타임아웃을 방어하는 강력한 재시도 로직 적용"""
     print(f"🎨 Hugging Face 이미지 생성 시작...")
     
     if not HF_TOKEN:
@@ -236,7 +236,6 @@ def generate_image_hf(prompt):
     headers = {"Authorization": f"Bearer {HF_TOKEN}"}
     payload = {"inputs": prompt}
     
-    # 허깅페이스 최신 API 라우터 주소로 업데이트
     models = [
         "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell",
         "https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-xl-base-1.0"
@@ -279,7 +278,6 @@ def generate_image_hf(prompt):
 
 # ====================== ImgBB 이미지 업로드 ======================
 def upload_image_to_imgbb(image_bytes):
-    """생성된 이미지를 ImgBB에 업로드하고 짧은 URL을 반환합니다."""
     print("☁️ ImgBB에 이미지 업로드 중...")
     if not IMGBB_API_KEY:
         print("❌ IMGBB_API_KEY가 없습니다.")
@@ -301,23 +299,18 @@ def upload_image_to_imgbb(image_bytes):
         print(f"❌ ImgBB 업로드 실패: {e}")
         return None
 
-# ====================== (완벽 통합) 이미지 생성 및 다이렉트 업로드 래퍼 함수 ======================
+# ====================== 이미지 생성 및 업로드 래퍼 함수 ======================
 def generate_and_upload_image(image_prompt):
-    # HF 모델이 Vibe Coding 블로그 스타일에 맞게 잘 그리도록 프롬프트 강화
     safe_prompt = re.sub(r'[^a-zA-Z0-9\s,]', '', image_prompt).strip()
     enhanced_prompt = f"A high-quality, vibrant flat design illustration for a tech blog. {safe_prompt}. Modern tech aesthetic, clean lines, highly detailed."
     print(f"🎨 이미지 프롬프트: {enhanced_prompt[:80]}...")
     
-    # 1. HF로 이미지 바이트 생성
     image_bytes = generate_image_hf(enhanced_prompt)
-    
-    # 2. ImgBB로 업로드
     if image_bytes:
         img_url = upload_image_to_imgbb(image_bytes)
         if img_url:
             return img_url
             
-    # 실패 시 깨지지 않는 깔끔한 기본 IT 이미지 주소 반환
     print("⚠️ 커스텀 이미지 생성/업로드 실패로 기본 이미지를 사용합니다.")
     return "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1024&q=80"
 
@@ -325,7 +318,6 @@ def generate_and_upload_image(image_prompt):
 def generate_content(topic):
     print(f"✍️ 글, 태그, 프롬프트 동시 생성 중: {topic}...")
 
-    # AI Coding Lab & Vibe Coding Schools 스타일에 맞춘 고도화된 프롬프트
     prompt = f"""
     당신은 2026년 최신 AI 코딩 트렌드를 이끄는 'AI 코딩 랩(AI Coding Lab)' 및 'Vibe Coding Schools'의 수석 테크 에디터입니다.
     주제: "{topic}" 에 대해 독자들이 실무에 바로 적용할 수 있는 **고퀄리티 실전 기술 블로그 글**을 작성해주세요.
@@ -333,11 +325,11 @@ def generate_content(topic):
     --- WRITING STYLE & TONE ---
     1. 도입부: 독자의 문제 상황(Pain point)이나 호기심을 먼저 짚어주고, 이 글을 읽어야 하는 확실한 이유와 가치를 제시하세요. 
     2. 본문 전개: 겉핥기식 설명은 철저히 배제하세요. 윈도우 환경, 실제 개발 워크플로우 등 구체적인 유즈케이스와 인사이트 위주로 작성하세요.
-    3. 어투: 전문가다운 신뢰감을 주면서도 가독성이 높은 '~합니다', '~해보겠습니다' 체를 사용하세요. (불필요하게 과도한 이모지는 자제하고, 섹션 구분을 위해 깔끔하게만 사용)
+    3. 어투: 전문가다운 신뢰감을 주면서도 가독성이 높은 '~합니다', '~해보겠습니다' 체를 사용하세요.
     4. 가독성: 문단은 짧고 호흡을 빠르게 가져가며, 핵심 키워드나 명령어는 굵게(Strong) 또는 코드로 처리하세요.
     
     --- CRITICAL REQUIREMENTS ---
-    1. Image Prompt: 썸네일 생성을 위해 이 글을 완벽히 표현하는 영단어 나열. (예: futuristic developer, glowing AI code, ultra detailed, dark mode IDE)
+    1. Image Prompt: 썸네일 생성을 위해 이 글을 완벽히 표현하는 영단어 나열.
     2. Tags: 이 글과 관련된 최신 트렌드 키워드 3~4개. (예: ClaudeCode, AI자동화, 개발생산성)
     3. Formatting: ONLY HTML tags (<h2>, <h3>, <p>, <ul>, <li>, <strong>, <code>, <br> 등). DO NOT use Markdown.
     
@@ -393,10 +385,11 @@ def post_to_blogger(title, content, image_url, dynamic_tags):
     labels = ["AI Coding", "VibeCoding"] + dynamic_tags
     labels = list(dict.fromkeys(labels))[:6]
     
-    # 🎯 700 ~ 4898점 랜덤 스코어링 로직 적용
-    score = random.randint(700, 4898)
+    # 🎯 이미지 요청사항 반영: 랜덤 별점, 리뷰 수, 스코어 생성
+    rating_val = round(random.uniform(4.7, 5.0), 1)
+    rates_count = random.randint(150, 999)
+    score_val = random.randint(700, 4898)
     
-    # ====================== (디자인 혁신) 가독성 극대화 CSS & 블로거 레이아웃 처리 ======================
     styled_content = f"""
     <style>
       .vibe-content {{ font-family: 'Noto Sans KR', sans-serif; color: #222; line-height: 1.8; letter-spacing: -0.3px; }}
@@ -407,19 +400,71 @@ def post_to_blogger(title, content, image_url, dynamic_tags):
       .vibe-content li {{ margin-bottom: 10px; font-size: 16px; }}
       .vibe-content code {{ background-color: #e9ecef; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; color: #d63384; font-size: 0.95em; }}
       
-      /* 스코어링 디자인 (심플하고 전문가 느낌 나게) */
-      .vibe-rating {{ text-align: right; margin-top: 70px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 1.1em; color: #555; }}
-      .score-highlight {{ font-size: 1.6em; font-weight: 900; color: #1a73e8; margin-left: 8px; }}
+      /* 스크린샷 반영: 상단/하단 푸른색 Callout Box 디자인 */
+      .vibe-callout {{
+        background-color: #f4f6fd;
+        padding: 18px 25px;
+        border-radius: 8px;
+        margin: 30px 0;
+        font-size: 16px;
+        color: #333;
+        line-height: 1.6;
+      }}
+      
+      /* 스크린샷 반영: 하단 별점 & 스코어 컨테이너 (우측 정렬) */
+      .vibe-footer-container {{
+        display: flex;
+        justify-content: flex-end; /* 우측 정렬 */
+        align-items: center;
+        gap: 30px; /* 별점과 스코어 사이 간격 */
+        margin-top: 60px;
+        padding-top: 25px;
+        border-top: 1px solid #eaeaea;
+        flex-wrap: wrap;
+      }}
+      
+      /* 별점 텍스트 색상 및 스타일 */
+      .vibe-rating {{
+        color: #ff9800; /* 오렌지색 별 */
+        font-size: 1.1em;
+      }}
+      .vibe-rating span {{
+        color: #555;
+        font-weight: 600;
+        margin-left: 5px;
+      }}
+      
+      /* Vibe Score 스타일 */
+      .vibe-score {{
+        font-size: 1.1em;
+        color: #555;
+      }}
+      .score-highlight {{
+        font-size: 1.4em;
+        font-weight: 900;
+        color: #1a73e8; /* 푸른색 강조 */
+      }}
     </style>
     
     <div class="vibe-content">
       <div style="text-align: center; margin-bottom: 45px;">
         <img src="{image_url}" alt="{title}" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"/>
       </div>
+      
       {content}
       
-      <div class="vibe-rating">
-        <strong>Vibe Score</strong>: <span class="score-highlight">{score}</span> 점
+      <div class="vibe-callout">
+        ⚡️ 코딩 한 줄 몰라도 괜찮습니다. <strong>실전 AI 코딩 랩</strong>이 당신의 상상을 현실로 만들어 드릴 테니까요!<br>
+        하루가 다르게 진화하는 Vibe Coding의 최전선, 가장 트렌디한 '돈 버는 기술'을 매일 무료로 받아보세요. 📩 🔔
+      </div>
+      
+      <div class="vibe-footer-container">
+        <div class="vibe-rating">
+          ⭐⭐⭐⭐⭐ <span>{rating_val} / {rates_count} rates</span>
+        </div>
+        <div class="vibe-score">
+          <strong>Vibe Score</strong>: <span class="score-highlight">{score_val}</span> 점
+        </div>
       </div>
     </div>
     """
@@ -428,7 +473,7 @@ def post_to_blogger(title, content, image_url, dynamic_tags):
     
     try:
         service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
-        print(f"✅ 포스팅 성공! 태그: {labels} | Vibe Score: {score}")
+        print(f"✅ 포스팅 성공! 태그: {labels} | 평점: {rating_val} | Vibe Score: {score_val}")
     except Exception as e:
         print(f"❌ Blogger 포스팅 실패: {e}")
 
@@ -438,7 +483,6 @@ if __name__ == "__main__":
     title, body, image_prompt, dynamic_tags = generate_content(topic)
     
     if title and body:
-        # 이미지 생성 및 다이렉트 호스팅 업로드 (가장 확실한 방법)
         final_image_url = generate_and_upload_image(image_prompt)
         post_to_blogger(title, body, final_image_url, dynamic_tags)
     else:
