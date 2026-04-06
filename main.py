@@ -350,30 +350,42 @@ def generate_content(topic):
     </article>
     """
 
-    try:
-        payload = {"contents": [{"parts": [{"text": prompt}]}]}
-        response = requests.post(GEMINI_TEXT_URL, json=payload, timeout=90)
-        response.raise_for_status()
-        content = response.json()['candidates'][0]['content']['parts'][0]['text']
-        content = convert_markdown_to_html(content.replace('```html', '').replace('```', ''))
+    max_retries = 3 # 최대 3번 재시도
+    for attempt in range(max_retries):
+        try:
+            payload = {"contents": [{"parts": [{"text": prompt}]}]}
+            response = requests.post(GEMINI_TEXT_URL, json=payload, timeout=90)
+            response.raise_for_status() # 여기서 503 에러를 감지합니다.
+            
+            content = response.json()['candidates'][0]['content']['parts'][0]['text']
+            content = convert_markdown_to_html(content.replace('```html', '').replace('```', ''))
 
-        image_prompt, dynamic_tags = "", []
+            image_prompt, dynamic_tags = "", []
 
-        img_match = re.search(r'\[FEATURED_IMAGE_PROMPT:\s*(.*?)\]', content)
-        if img_match: image_prompt = img_match.group(1).strip()
+            img_match = re.search(r'\[FEATURED_IMAGE_PROMPT:\s*(.*?)\]', content)
+            if img_match: image_prompt = img_match.group(1).strip()
 
-        tag_match = re.search(r'\[TAGS:\s*(.*?)\]', content)
-        if tag_match: dynamic_tags = [t.strip() for t in tag_match.group(1).split(',')]
+            tag_match = re.search(r'\[TAGS:\s*(.*?)\]', content)
+            if tag_match: dynamic_tags = [t.strip() for t in tag_match.group(1).split(',')]
 
-        article_start = content.find('<article>')
-        body = content[article_start:].strip() if article_start != -1 else content
-        title = body[body.find('<h1>')+4 : body.find('</h1>')].strip() if '<h1>' in body else topic
+            article_start = content.find('<article>')
+            body = content[article_start:].strip() if article_start != -1 else content
+            title = body[body.find('<h1>')+4 : body.find('</h1>')].strip() if '<h1>' in body else topic
 
-        return title, body, image_prompt, dynamic_tags
+            return title, body, image_prompt, dynamic_tags
 
-    except Exception as e:
-        print(f"❌ 텍스트 생성 오류: {e}")
-        return None, None, "", []
+        except requests.exceptions.HTTPError as e:
+            if response.status_code in [500, 502, 503, 504]:
+                print(f"   ⏳ 구글 서버 지연(503). 10초 대기 후 재시도 중... ({attempt+1}/{max_retries})")
+                time.sleep(10) # 10초 쉬고 다시 시도
+            else:
+                print(f"❌ API 오류: {e}")
+                break
+        except Exception as e:
+            print(f"❌ 텍스트 생성 예기치 않은 오류: {e}")
+            break
+
+    return None, None, "", []
 
 # ====================== 블로거 포스팅 ======================
 def post_to_blogger(title, content, image_url, dynamic_tags):
