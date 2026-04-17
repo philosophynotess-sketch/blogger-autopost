@@ -22,7 +22,7 @@ GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 HF_TOKEN = os.environ.get("HF_TOKEN")
 IMGBB_API_KEY = os.environ.get("IMGBB_API_KEY")
 
-GEMINI_TEXT_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+GEMINI_TEXT_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key={GEMINI_API_KEY}"
 
 # ====================== 데이터 로드 (카테고리 구조 반영) ======================
 def load_topics(filepath="topics.json"):
