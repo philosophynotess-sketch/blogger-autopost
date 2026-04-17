@@ -6,6 +6,7 @@ import random
 import re
 import base64
 from datetime import datetime
+from typing import Tuple, Optional, List
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -22,7 +23,84 @@ GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 HF_TOKEN = os.environ.get("HF_TOKEN")
 IMGBB_API_KEY = os.environ.get("IMGBB_API_KEY")
 
-GEMINI_TEXT_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key={GEMINI_API_KEY}"
+# 📌 모델 우선순위 (위에서부터 시도)
+GEMINI_MODELS = [
+    "gemini-2.5-flash",           # ✅ 가장 안정적
+    "gemini-2.5-flash-lite",       # ⚡ 더 빠르고 저렴
+    "gemini-3-flash-preview",      # 📮 최신 프리뷰
+]
+
+# 재시도 설정
+RETRY_CONFIG = {
+    "max_attempts": 3,           # 총 3회 시도
+    "interval_seconds": 120,     # 2분 간격
+}
+
+# ====================== 재시도 로직 ======================
+def call_gemini_with_retry(prompt: str) -> Optional[str]:
+    """
+    Gemini API를 재시도 로직과 함께 호출
+    - 모델별 fallback 전략
+    - 2분 간격 3회 재시도
+    - 상세한 에러 로깅
+    """
+    for model_idx, model_name in enumerate(GEMINI_MODELS):
+        print(f"\n🤖 시도 중: [{model_idx + 1}/{len(GEMINI_MODELS)}] {model_name}")
+        
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+        payload = {"contents": [{"parts": [{"text": prompt}]}]}
+        
+        for attempt in range(1, RETRY_CONFIG["max_attempts"] + 1):
+            try:
+                print(f"  📍 시도 {attempt}/{RETRY_CONFIG['max_attempts']}", end="")
+                response = requests.post(url, json=payload, timeout=150)
+                
+                # ✅ 성공
+                if response.status_code == 200:
+                    print(" ✅")
+                    return response.json()['candidates'][0]['content']['parts'][0]['text']
+                
+                # ❌ 클라이언트 에러 (400, 404, 403 등) - 재시도 안 함, 다음 모델로
+                elif 400 <= response.status_code < 500:
+                    print(f" ❌ ({response.status_code}: {response.reason})")
+                    print(f"     → 모델 지원 불가, 다음 모델 시도...")
+                    break  # 이 모델 포기, 다음 모델로
+                
+                # ⚠️ 서버 에러 (500, 503 등) - 재시도
+                elif response.status_code >= 500:
+                    error_msg = response.json().get('error', {}).get('message', response.reason)
+                    print(f" ⚠️ ({response.status_code}: {error_msg})")
+                    
+                    if attempt < RETRY_CONFIG["max_attempts"]:
+                        wait_time = RETRY_CONFIG["interval_seconds"]
+                        print(f"     → {wait_time}초 후 재시도...")
+                        time.sleep(wait_time)
+                    continue
+                
+            except requests.exceptions.Timeout:
+                print(f" ⏱️ (Timeout)")
+                if attempt < RETRY_CONFIG["max_attempts"]:
+                    wait_time = RETRY_CONFIG["interval_seconds"]
+                    print(f"     → {wait_time}초 후 재시도...")
+                    time.sleep(wait_time)
+                continue
+                
+            except requests.exceptions.RequestException as e:
+                print(f" ❌ (Network Error: {str(e)[:50]})")
+                if attempt < RETRY_CONFIG["max_attempts"]:
+                    wait_time = RETRY_CONFIG["interval_seconds"]
+                    print(f"     → {wait_time}초 후 재시도...")
+                    time.sleep(wait_time)
+                continue
+        
+        print(f"  ✗ {model_name} 실패\n")
+    
+    # 모든 모델 및 재시도 소진
+    print("\n❌ 모든 Gemini 모델 소진. API 상태 확인 필요:")
+    print("   - https://status.cloud.google.com")
+    print("   - API 할당량(quota) 확인")
+    print("   - API 키 유효성 확인")
+    return None
 
 # ====================== 데이터 로드 (카테고리 구조 반영) ======================
 def load_topics(filepath="topics.json"):
@@ -62,17 +140,17 @@ def get_published_titles():
 
 def get_vibe_coding_topic(topics_dict):
     published_titles = get_published_titles()
-    
+
     categories = list(topics_dict.keys())
     random.shuffle(categories) 
-    
+
     for category in categories:
         topics = topics_dict[category]
         random.shuffle(topics) 
         for topic in topics:
             if topic.lower() not in published_titles:
                 return category, topic
-                
+
     return "AI 실무 가이드", "2026 실전 AI 코딩 활용 가이드"
 
 # ====================== 콘텐츠 생성 ======================
@@ -103,41 +181,38 @@ def generate_content(category, topic):
     </article>
     """
 
-    try:
-        payload = {"contents": [{"parts": [{"text": prompt}]}]}
-        response = requests.post(GEMINI_TEXT_URL, json=payload, timeout=150)
-        response.raise_for_status()
-        
-        full_text = response.json()['candidates'][0]['content']['parts'][0]['text']
-        
-        image_prompt = re.search(r'\[FEATURED_IMAGE_PROMPT:\s*(.*?)\]', full_text, re.IGNORECASE)
-        image_prompt = image_prompt.group(1).strip() if image_prompt else topic
-        
-        tags_match = re.search(r'\[TAGS:\s*(.*?)\]', full_text, re.IGNORECASE)
-        dynamic_tags = [t.strip() for t in tags_match.group(1).split(',')] if tags_match else []
-
-        article_start = full_text.find('<article>')
-        body = full_text[article_start:].strip() if article_start != -1 else full_text
-        
-        title_match = re.search(r'<h1>(.*?)</h1>', body, re.IGNORECASE)
-        final_title = title_match.group(1).strip() if title_match else topic
-        
-        # 프롬프트 찌꺼기 완벽 제거
-        body = re.sub(r'<h1>.*?</h1>', '', body, flags=re.IGNORECASE | re.DOTALL)
-        body = re.sub(r'\[FEATURED_IMAGE_PROMPT:.*?\]', '', body, flags=re.IGNORECASE | re.DOTALL)
-        body = re.sub(r'\[TAGS:.*?\]', '', body, flags=re.IGNORECASE | re.DOTALL)
-        body = body.replace('<article>', '').replace('</article>', '').strip()
-        
-        return final_title, body, image_prompt, dynamic_tags
-    except Exception as e:
-        print(f"❌ 콘텐츠 생성 오류: {e}")
+    # 🔄 재시도 로직 포함 Gemini 호출
+    full_text = call_gemini_with_retry(prompt)
+    
+    if not full_text:
+        print("❌ Gemini API 호출 실패 (모든 재시도 소진)")
         return None, None, "", []
+
+    image_prompt = re.search(r'\[FEATURED_IMAGE_PROMPT:\s*(.*?)\]', full_text, re.IGNORECASE)
+    image_prompt = image_prompt.group(1).strip() if image_prompt else topic
+
+    tags_match = re.search(r'\[TAGS:\s*(.*?)\]', full_text, re.IGNORECASE)
+    dynamic_tags = [t.strip() for t in tags_match.group(1).split(',')] if tags_match else []
+
+    article_start = full_text.find('<article>')
+    body = full_text[article_start:].strip() if article_start != -1 else full_text
+
+    title_match = re.search(r'<h1>(.*?)</h1>', body, re.IGNORECASE)
+    final_title = title_match.group(1).strip() if title_match else topic
+
+    # 프롬프트 찌꺼기 완벽 제거
+    body = re.sub(r'<h1>.*?</h1>', '', body, flags=re.IGNORECASE | re.DOTALL)
+    body = re.sub(r'\[FEATURED_IMAGE_PROMPT:.*?\]', '', body, flags=re.IGNORECASE | re.DOTALL)
+    body = re.sub(r'\[TAGS:.*?\]', '', body, flags=re.IGNORECASE | re.DOTALL)
+    body = body.replace('<article>', '').replace('</article>', '').strip()
+
+    return final_title, body, image_prompt, dynamic_tags
 
 # ====================== 이미지 및 포스팅 로직 ======================
 def generate_and_upload_image(image_prompt):
     print("🎨 주제 맞춤형 썸네일 생성 중...")
     if not HF_TOKEN: return "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1024"
-    
+
     headers = {"Authorization": f"Bearer {HF_TOKEN}"}
     url = "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell"
     try:
@@ -159,13 +234,13 @@ def post_to_blogger(title, content, image_url, category, dynamic_tags):
     if not title or not content: return
     service = get_blogger_service()
     blog_id = os.environ["BLOGGER_BLOG_ID"]
-    
+
     rating_val = round(random.uniform(4.8, 5.0), 1)
     rates_count = random.randint(1500, 5500)
-    
+
     # 📌 대주제 1개 + 동적 생성 관련 태그 3개 = 총 4개
     final_tags = [category] + dynamic_tags[:3]
-    
+
     styled_content = f"""
     <div class="reading-progress-container">
       <div class="reading-progress-bar" id="myProgressBar"></div>
@@ -253,7 +328,7 @@ def post_to_blogger(title, content, image_url, category, dynamic_tags):
       }});
     </script>
     """
-    
+
     body = {"kind": "blogger#post", "title": title, "content": styled_content, "labels": final_tags}
     try:
         service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
@@ -265,7 +340,7 @@ def post_to_blogger(title, content, image_url, category, dynamic_tags):
 if __name__ == "__main__":
     topics_dict = load_topics("topics.json")
     category, topic = get_vibe_coding_topic(topics_dict)
-    
+
     title, body, img_prompt, dynamic_tags = generate_content(category, topic)
     if title and body:
         image_url = generate_and_upload_image(img_prompt)
