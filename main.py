@@ -27,22 +27,17 @@ GEMINI_TEXT_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemi
 # ====================== 데이터 로드 (카테고리 구조 반영) ======================
 def load_topics(filepath="topics.json"):
     """
-    topics.json이 다음과 같은 딕셔너리 구조라고 가정합니다:
-    {
-      "대주제1": ["주제1", "주제2"],
-      "대주제2": ["주제3", "주제4"]
-    }
+    topics.json 딕셔너리 구조 (대주제: [소주제들])
     """
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
             data = json.load(f)
-            # 만약 기존처럼 단순히 리스트 구조라면 임의의 대주제로 매핑
             if isinstance(data.get("topics"), list):
                 return {"AI 실무 활용": data["topics"]}
             return data
     except Exception as e:
         print(f"⚠️ 주제 파일 로드 실패: {e}")
-        return {"기본 카테고리": ["AI를 활용한 업무 자동화 혁명"]}
+        return {"Vibe Coding 시작하기 (초보)": ["AI를 활용한 업무 자동화 혁명"]}
 
 def get_blogger_service():
     creds = Credentials(
@@ -69,18 +64,18 @@ def get_vibe_coding_topic(topics_dict):
     published_titles = get_published_titles()
     
     categories = list(topics_dict.keys())
-    random.shuffle(categories) # 카테고리 랜덤 섞기
+    random.shuffle(categories) 
     
     for category in categories:
         topics = topics_dict[category]
-        random.shuffle(topics) # 카테고리 내 주제 랜덤 섞기
+        random.shuffle(topics) 
         for topic in topics:
             if topic.lower() not in published_titles:
                 return category, topic
                 
     return "AI 실무 가이드", "2026 실전 AI 코딩 활용 가이드"
 
-# ====================== 콘텐츠 생성 (문제 해결 중심) ======================
+# ====================== 콘텐츠 생성 ======================
 def generate_content(category, topic):
     print(f"✍️ 콘텐츠 생성 중... | 대주제: {category} | 주제: {topic}")
 
@@ -115,25 +110,22 @@ def generate_content(category, topic):
         
         full_text = response.json()['candidates'][0]['content']['parts'][0]['text']
         
-        # 메타 데이터 추출
         image_prompt = re.search(r'\[FEATURED_IMAGE_PROMPT:\s*(.*?)\]', full_text, re.IGNORECASE)
         image_prompt = image_prompt.group(1).strip() if image_prompt else topic
         
         tags_match = re.search(r'\[TAGS:\s*(.*?)\]', full_text, re.IGNORECASE)
         dynamic_tags = [t.strip() for t in tags_match.group(1).split(',')] if tags_match else []
 
-        # 본문(article) 추출
         article_start = full_text.find('<article>')
         body = full_text[article_start:].strip() if article_start != -1 else full_text
         
-        # 제목(H1) 추출
         title_match = re.search(r'<h1>(.*?)</h1>', body, re.IGNORECASE)
         final_title = title_match.group(1).strip() if title_match else topic
         
-        # ⚠️ 치명적 오류 수정: 찌꺼기 텍스트 완벽 제거
-        body = re.sub(r'<h1>.*?</h1>', '', body, flags=re.IGNORECASE | re.DOTALL) # H1 태그 삭제
-        body = re.sub(r'\[FEATURED_IMAGE_PROMPT:.*?\]', '', body, flags=re.IGNORECASE | re.DOTALL) # 이미지 프롬프트 찌꺼기 삭제
-        body = re.sub(r'\[TAGS:.*?\]', '', body, flags=re.IGNORECASE | re.DOTALL) # 태그 찌꺼기 삭제
+        # 프롬프트 찌꺼기 완벽 제거
+        body = re.sub(r'<h1>.*?</h1>', '', body, flags=re.IGNORECASE | re.DOTALL)
+        body = re.sub(r'\[FEATURED_IMAGE_PROMPT:.*?\]', '', body, flags=re.IGNORECASE | re.DOTALL)
+        body = re.sub(r'\[TAGS:.*?\]', '', body, flags=re.IGNORECASE | re.DOTALL)
         body = body.replace('<article>', '').replace('</article>', '').strip()
         
         return final_title, body, image_prompt, dynamic_tags
@@ -171,14 +163,36 @@ def post_to_blogger(title, content, image_url, category, dynamic_tags):
     rating_val = round(random.uniform(4.8, 5.0), 1)
     rates_count = random.randint(1500, 5500)
     
-    # 카테고리 태그 1개 + 동적 생성 태그 최대 3개 병합
+    # 📌 대주제 1개 + 동적 생성 관련 태그 3개 = 총 4개
     final_tags = [category] + dynamic_tags[:3]
     
-    # CSS 및 HTML 렌더링 (실전 AI 코딩 랩 브랜딩 반영)
     styled_content = f"""
+    <div class="reading-progress-container">
+      <div class="reading-progress-bar" id="myProgressBar"></div>
+    </div>
+
     <style>
       html {{ scroll-behavior: smooth; }}
-      .vibe-wrap {{ font-family: 'Pretendard', 'Noto Sans KR', sans-serif; color: #333; line-height: 1.8; max-width: 850px; margin: auto; word-break: keep-all; }}
+      
+      /* 스크롤 진행률 바 CSS (상단 고정 & 빨간색) */
+      .reading-progress-container {{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px; /* 바 두께 */
+        background-color: transparent;
+        z-index: 99999; /* 항상 최상단에 위치 */
+      }}
+      .reading-progress-bar {{
+        height: 100%;
+        width: 0%;
+        background-color: #e53e3e; /* 요청하신 빨간색 계열 */
+        transition: width 0.1s ease-out;
+      }}
+
+      /* 본문 디자인 CSS */
+      .vibe-wrap {{ font-family: 'Pretendard', 'Noto Sans KR', sans-serif; color: #333; line-height: 1.8; max-width: 850px; margin: auto; word-break: keep-all; padding-top: 10px; }}
       .hero-img {{ width: 100%; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }}
       
       .vibe-keypoint {{ background: #f5f3ff; border: 1px solid #ede9fe; border-radius: 10px; padding: 20px 25px; margin-bottom: 35px; }}
@@ -226,12 +240,24 @@ def post_to_blogger(title, content, image_url, category, dynamic_tags):
         <div class="vibe-rating">⭐⭐⭐⭐⭐ <span>{rating_val} / {rates_count} rates</span></div>
       </div>
     </div>
+
+    <script>
+      window.addEventListener('scroll', function() {{
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var progressBar = document.getElementById("myProgressBar");
+        if (progressBar) {{
+            progressBar.style.width = scrolled + "%";
+        }}
+      }});
+    </script>
     """
     
     body = {"kind": "blogger#post", "title": title, "content": styled_content, "labels": final_tags}
     try:
         service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
-        print(f"✅ 포스팅 완료! 태그: {final_tags}")
+        print(f"✅ 스크롤 바 포함 포스팅 완료! 태그: {final_tags}")
     except Exception as e:
         print(f"❌ 포스팅 오류: {e}")
 
