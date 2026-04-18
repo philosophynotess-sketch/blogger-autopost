@@ -1,4 +1,4 @@
-Name: Daily Vibe Coding Auto Post
+name: Daily Vibe Coding Auto Post
 
 on:
   schedule:
@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install anthropic google-api-python-client google-auth-httplib2 google-auth-oauthlib requests markdown
+          pip install requests google-api-python-client google-auth-httplib2 google-auth-oauthlib python-dotenv
 
       - name: Generate & Publish Blog Post
         env:
@@ -33,7 +33,10 @@ jobs:
           G_REFRESH_TOKEN: ${{ secrets.G_REFRESH_TOKEN }}
           BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}          
+          IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
+          # 새로 추가된 쿠팡 파트너스 API 키 환경 변수
+          COUPANG_ACCESS_KEY: ${{ secrets.COUPANG_ACCESS_KEY }}
+          COUPANG_SECRET_KEY: ${{ secrets.COUPANG_SECRET_KEY }}
         run: python main.py
 
       - name: Success Notification
