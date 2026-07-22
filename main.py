@@ -6,11 +6,12 @@ import sys
 import traceback
 
 from config.settings import load_settings
-from content.coupang_rotation import pick_coupang_link
+from content.coupang_rotation import pick_coupang_link, pick_coupang_pair
 from content.generators import generate_post
 from content.schedule import resolve_slot
 from publish.blogger import publish_post
 from publish.images import generate_and_upload_image
+from render.affiliate import inject_mid_affiliate, render_affiliate_mid
 from render.templates import render_post_html
 
 
@@ -37,18 +38,25 @@ def run() -> int:
     if slot.needs_image:
         image_url = generate_and_upload_image(settings, post.image_prompt)
 
-    # Built-in link rotation (one full cycle without repeat, then reshuffle).
-    # Optional COUPANG_PARTNERS_URL secret overrides for emergency/testing only.
-    coupang_url = settings.coupang_partners_url or pick_coupang_link(slot.post_date)
+    # Two partners slots: mid (before 영역별 운세) + footer. Different URLs when possible.
+    # Optional COUPANG_PARTNERS_URL forces both slots to the same override URL.
+    if settings.coupang_partners_url:
+        mid_url = footer_url = settings.coupang_partners_url
+    else:
+        mid_url, footer_url = pick_coupang_pair(slot.post_date)
+
+    body_with_mid = inject_mid_affiliate(
+        post.body_html, render_affiliate_mid(mid_url)
+    )
 
     html = render_post_html(
         title=post.title,
-        body_html=post.body_html,
+        body_html=body_with_mid,
         labels=labels,
         app_name=settings.app_name,
         app_url=settings.app_url,
         image_url=image_url,
-        coupang_url=coupang_url,
+        coupang_url=footer_url,
         coupang_title=settings.coupang_title,
         coupang_description=settings.coupang_description,
         coupang_banner_url=settings.coupang_banner_url,
@@ -58,8 +66,9 @@ def run() -> int:
     print(f"🏷  라벨: {labels}")
     if post.seo_topic:
         print(f"🔎 SEO 주제: {post.seo_topic}")
-    print(f"📝 본문 길이: {len(post.body_html)} chars")
-    print(f"🛒 쿠팡 링크: {coupang_url}")
+    print(f"📝 본문 길이: {len(body_with_mid)} chars")
+    print(f"🛒 쿠팡 중간: {mid_url}")
+    print(f"🛒 쿠팡 하단: {footer_url}")
 
     if settings.dry_run:
         print("🧪 DRY_RUN=1 — Blogger 발행 생략")

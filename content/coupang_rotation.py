@@ -35,18 +35,35 @@ def load_coupang_links(path: Path | None = None) -> list[str]:
     return links
 
 
-def pick_coupang_link(post_date: date, links: list[str] | None = None) -> str:
+def pick_coupang_link(
+    post_date: date,
+    links: list[str] | None = None,
+    *,
+    offset: int = 0,
+) -> str:
     """
-    One link per day. Within each round of len(links) days every URL is used
-    exactly once (shuffled by round). After a full cycle, reshuffle for the
-    next round. Deterministic for the same date (CI-friendly, no state file).
+    Deterministic link pick for a calendar day (+ optional offset).
+
+    Within each round of len(links) days every URL is used once (shuffled by
+    round). offset=1 yields a different slot than offset=0 on the same day
+    (for mid-post vs footer links).
     """
     pool = links if links is not None else load_coupang_links()
     n = len(pool)
-    day_index = post_date.toordinal()
+    day_index = post_date.toordinal() + int(offset)
     round_num = day_index // n
     pos = day_index % n
 
     order = pool.copy()
     random.Random(round_num).shuffle(order)
     return order[pos]
+
+
+def pick_coupang_pair(post_date: date, links: list[str] | None = None) -> tuple[str, str]:
+    """Return (mid_link, footer_link), always different when pool has 2+ URLs."""
+    pool = links if links is not None else load_coupang_links()
+    mid = pick_coupang_link(post_date, pool, offset=0)
+    footer = pick_coupang_link(post_date, pool, offset=1)
+    if footer == mid and len(pool) > 1:
+        footer = pick_coupang_link(post_date, pool, offset=2)
+    return mid, footer

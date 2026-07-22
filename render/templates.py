@@ -136,6 +136,10 @@ def render_post_html(
     margin: 36px 0 20px; padding: 20px 18px; border-radius: 14px;
     border: 1px solid #e9d5ff; background: #faf5ff; text-align: center;
   }}
+  .f-affiliate-mid {{
+    margin: 28px 0 24px; padding: 16px 16px;
+    background: #f8fafc; border: 1px dashed #c4b5fd;
+  }}
   .f-aff-label {{
     margin: 0 0 8px; font-size: 0.8em; font-weight: 800; letter-spacing: 0.04em;
     color: #7c3aed; text-transform: uppercase;
