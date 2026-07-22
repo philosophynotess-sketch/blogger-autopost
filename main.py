@@ -46,7 +46,8 @@ def run() -> int:
         mid_url, footer_url = pick_coupang_pair(slot.post_date)
 
     body_with_mid = inject_mid_affiliate(
-        post.body_html, render_affiliate_mid(mid_url)
+        post.body_html,
+        render_affiliate_mid(mid_url, post_date=slot.post_date),
     )
 
     html = render_post_html(
@@ -60,6 +61,7 @@ def run() -> int:
         coupang_title=settings.coupang_title,
         coupang_description=settings.coupang_description,
         coupang_banner_url=settings.coupang_banner_url,
+        post_date=slot.post_date,
     )
 
     print(f"📰 제목: {post.title}")

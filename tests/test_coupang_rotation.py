@@ -51,7 +51,10 @@ def test_pair_links_differ():
 
 def test_inject_before_areas():
     body = '<section class="f-timeline">x</section>\n<section class="f-areas"><h2>영역별 운세</h2></section>'
-    mid = render_affiliate_mid("https://link.coupang.com/a/fA8QcAjdjU")
+    mid = render_affiliate_mid(
+        "https://link.coupang.com/a/fA8QcAjdjU",
+        post_date=date(2026, 7, 24),
+    )
     out = inject_mid_affiliate(body, mid)
     assert out.index("f-affiliate-mid") < out.index("f-areas")
     assert "https://link.coupang.com/a/fA8QcAjdjU" in out

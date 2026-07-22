@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from datetime import date
+
 from render.affiliate import render_affiliate_block
 from render.cta import render_cta
 
@@ -18,6 +20,7 @@ def render_post_html(
     coupang_title: str = "",
     coupang_description: str = "",
     coupang_banner_url: str = "",
+    post_date: date | None = None,
 ) -> str:
     hero = ""
     if image_url:
@@ -35,6 +38,7 @@ def render_post_html(
         title=coupang_title,
         description=coupang_description,
         banner_image_url=coupang_banner_url,
+        post_date=post_date,
     )
     tags_str = ", ".join(labels)
 
