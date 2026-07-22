@@ -43,6 +43,10 @@ def run() -> int:
         app_name=settings.app_name,
         app_url=settings.app_url,
         image_url=image_url,
+        coupang_url=settings.coupang_partners_url,
+        coupang_title=settings.coupang_title,
+        coupang_description=settings.coupang_description,
+        coupang_banner_url=settings.coupang_banner_url,
     )
 
     print(f"📰 제목: {post.title}")

@@ -75,6 +75,8 @@ python main.py
 
 - `APP_NAME`, `APP_URL` — 앱 배포 후 설정
 - `HF_TOKEN`, `IMGBB_API_KEY` — 일요일 SEO 썸네일
+- `COUPANG_PARTNERS_URL` — 글 하단 쿠팡 파트너스 링크 (없으면 블록 숨김)
+- `COUPANG_TITLE`, `COUPANG_DESCRIPTION`, `COUPANG_BANNER_URL` — 파트너스 문구/배너(선택)
 
 수동 실행: Actions → **Daily Fortune Blog Post** → Run workflow  
 `force_category`, `dry_run` 입력 가능.

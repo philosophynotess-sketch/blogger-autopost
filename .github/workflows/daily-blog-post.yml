@@ -44,6 +44,10 @@ jobs:
           IMGBB_API_KEY: ${{ secrets.IMGBB_API_KEY }}
           APP_NAME: ${{ secrets.APP_NAME }}
           APP_URL: ${{ secrets.APP_URL }}
+          COUPANG_PARTNERS_URL: ${{ secrets.COUPANG_PARTNERS_URL }}
+          COUPANG_TITLE: ${{ secrets.COUPANG_TITLE }}
+          COUPANG_DESCRIPTION: ${{ secrets.COUPANG_DESCRIPTION }}
+          COUPANG_BANNER_URL: ${{ secrets.COUPANG_BANNER_URL }}
           FORCE_CATEGORY: ${{ github.event.inputs.force_category }}
           DRY_RUN: ${{ github.event.inputs.dry_run || '0' }}
         run: python main.py

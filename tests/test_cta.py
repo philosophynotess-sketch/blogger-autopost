@@ -13,6 +13,8 @@ def test_cta_without_url_is_coming_soon():
     assert "준비 중" in html
     assert "href=" not in html
     assert "운세 앱" in html
+    assert "북마크" not in html
+    assert "곧 선보일" not in html
 
 
 def test_cta_escapes_html():

@@ -76,10 +76,14 @@ class Settings:
     g_client_secret: str
     g_refresh_token: str
     blogger_blog_id: str
-    app_name: str = "운세 앱"
+    app_name: str = "운세 인사이트"
     app_url: str = ""
     hf_token: str = ""
     imgbb_api_key: str = ""
+    coupang_partners_url: str = ""
+    coupang_title: str = ""
+    coupang_description: str = ""
+    coupang_banner_url: str = ""
     dry_run: bool = False
     force_category: Optional[str] = None
     gemini_model: str = "gemini-2.5-flash"
@@ -139,10 +143,14 @@ def load_settings() -> Settings:
         g_client_secret=csec,
         g_refresh_token=rtok,
         blogger_blog_id=blog_id,
-        app_name=os.environ.get("APP_NAME", "운세 앱").strip() or "운세 앱",
+        app_name=os.environ.get("APP_NAME", "운세 인사이트").strip() or "운세 인사이트",
         app_url=os.environ.get("APP_URL", "").strip(),
         hf_token=os.environ.get("HF_TOKEN", "").strip(),
         imgbb_api_key=os.environ.get("IMGBB_API_KEY", "").strip(),
+        coupang_partners_url=os.environ.get("COUPANG_PARTNERS_URL", "").strip(),
+        coupang_title=os.environ.get("COUPANG_TITLE", "").strip(),
+        coupang_description=os.environ.get("COUPANG_DESCRIPTION", "").strip(),
+        coupang_banner_url=os.environ.get("COUPANG_BANNER_URL", "").strip(),
         dry_run=dry,
         force_category=force,
         gemini_model=os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip()
