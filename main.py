@@ -6,6 +6,7 @@ import sys
 import traceback
 
 from config.settings import load_settings
+from content.coupang_rotation import pick_coupang_link
 from content.generators import generate_post
 from content.schedule import resolve_slot
 from publish.blogger import publish_post
@@ -36,6 +37,10 @@ def run() -> int:
     if slot.needs_image:
         image_url = generate_and_upload_image(settings, post.image_prompt)
 
+    # Built-in link rotation (one full cycle without repeat, then reshuffle).
+    # Optional COUPANG_PARTNERS_URL secret overrides for emergency/testing only.
+    coupang_url = settings.coupang_partners_url or pick_coupang_link(slot.post_date)
+
     html = render_post_html(
         title=post.title,
         body_html=post.body_html,
@@ -43,7 +48,7 @@ def run() -> int:
         app_name=settings.app_name,
         app_url=settings.app_url,
         image_url=image_url,
-        coupang_url=settings.coupang_partners_url,
+        coupang_url=coupang_url,
         coupang_title=settings.coupang_title,
         coupang_description=settings.coupang_description,
         coupang_banner_url=settings.coupang_banner_url,
@@ -54,6 +59,7 @@ def run() -> int:
     if post.seo_topic:
         print(f"🔎 SEO 주제: {post.seo_topic}")
     print(f"📝 본문 길이: {len(post.body_html)} chars")
+    print(f"🛒 쿠팡 링크: {coupang_url}")
 
     if settings.dry_run:
         print("🧪 DRY_RUN=1 — Blogger 발행 생략")

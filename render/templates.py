@@ -148,7 +148,11 @@ def render_post_html(
     text-decoration: none; padding: 11px 18px; border-radius: 999px;
   }}
   .f-aff-legal {{
-    margin: 14px 0 0; font-size: 0.78em; color: #6b7280; line-height: 1.5;
+    margin: 16px 0 0; font-size: 0.75em; color: #9ca3af; line-height: 1.55;
+    opacity: 0.85;
+  }}
+  .f-affiliate-legal-only {{
+    background: transparent; border: none; padding: 8px 0; margin: 24px 0 12px;
   }}
 </style>
 

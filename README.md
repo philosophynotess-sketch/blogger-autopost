@@ -75,8 +75,10 @@ python main.py
 
 - `APP_NAME`, `APP_URL` — 앱 배포 후 설정
 - `HF_TOKEN`, `IMGBB_API_KEY` — 일요일 SEO 썸네일
-- `COUPANG_PARTNERS_URL` — 글 하단 쿠팡 파트너스 링크 (없으면 블록 숨김)
-- `COUPANG_TITLE`, `COUPANG_DESCRIPTION`, `COUPANG_BANNER_URL` — 파트너스 문구/배너(선택)
+- 쿠팡 링크: `content/coupang_links.json` 목록을 **날짜 기준 로테이션** (한 바퀴에 각 링크 1회, 다음 바퀴 재셔플)
+- 글 하단 필수 고지: `이 포스팅은 쿠팡 파트너스 활동의 일환으로…` (항상 표시)
+- `COUPANG_PARTNERS_URL` — (선택) 있으면 로테이션 대신 이 URL 고정
+- `COUPANG_TITLE`, `COUPANG_DESCRIPTION`, `COUPANG_BANNER_URL` — 문구/배너(선택)
 
 수동 실행: Actions → **Daily Fortune Blog Post** → Run workflow  
 `force_category`, `dry_run` 입력 가능.

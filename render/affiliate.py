@@ -1,6 +1,8 @@
-"""Coupang Partners (or generic affiliate) footer block."""
+"""Coupang Partners footer block (rotated link + required disclosure)."""
 
 from __future__ import annotations
+
+from content.coupang_rotation import COUPANG_DISCLOSURE
 
 
 def render_affiliate_block(
@@ -10,10 +12,15 @@ def render_affiliate_block(
     description: str = "",
     banner_image_url: str = "",
 ) -> str:
-    """Return HTML for end-of-post affiliate block. Empty if no URL."""
+    """Return HTML for end-of-post Coupang block. Requires a partners URL."""
     link = (url or "").strip()
     if not link:
-        return ""
+        # Still show disclosure-only if somehow empty (should not happen in main)
+        return f"""
+      <div class="f-affiliate f-affiliate-legal-only">
+        <p class="f-aff-legal">{_esc(COUPANG_DISCLOSURE)}</p>
+      </div>
+"""
 
     headline = (title or "오늘의 운세 루틴에 어울리는 아이템").strip()
     desc = (
@@ -43,9 +50,7 @@ def render_affiliate_block(
             추천 상품 보러가기 →
           </a>
         </p>
-        <p class="f-aff-legal">
-          이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
-        </p>
+        <p class="f-aff-legal">{_esc(COUPANG_DISCLOSURE)}</p>
       </div>
 """
 
