@@ -64,18 +64,20 @@ def render_post_html(
     border: 1px solid #e9d5ff; border-radius: 12px; padding: 18px 20px; margin-bottom: 28px;
   }}
   .f-summary p {{ margin: 0; color: #4c1d95; }}
-  .f-grid {{
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px; margin: 24px 0 32px;
+  /* Full-width stacked cards (read top → bottom, easy on mobile/desktop) */
+  .f-grid, .f-stack {{
+    display: flex; flex-direction: column; gap: 12px; margin: 12px 0 28px;
   }}
   .f-card {{
+    display: block; width: 100%; box-sizing: border-box;
     background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
-    padding: 16px 16px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border-left: 4px solid #8b5cf6;
+    padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   }}
   .f-card h3 {{
-    margin: 0 0 8px; font-size: 1.05em; color: #6d28d9; font-weight: 800;
+    margin: 0 0 10px; font-size: 1.08em; color: #5b21b6; font-weight: 800;
   }}
-  .f-card p {{ margin: 0; font-size: 0.95em; color: #374151; }}
+  .f-card p {{ margin: 0; font-size: 0.98em; color: #374151; line-height: 1.75; }}
   .f-lucky {{
     background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px;
     padding: 16px 20px; margin: 20px 0 28px;
@@ -89,21 +91,23 @@ def render_post_html(
     background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;
     padding: 16px 20px; margin: 20px 0 28px;
   }}
-  .f-timeline {{ margin: 24px 0 8px; }}
-  .f-tip h2, .f-faq h2, .f-wrap h2, .f-avoid h2, .f-highlight h2, .f-timeline h2 {{
+  .f-timeline, .f-areas {{ margin: 28px 0 8px; }}
+  .f-tip h2, .f-faq h2, .f-wrap h2, .f-avoid h2, .f-highlight h2,
+  .f-timeline h2, .f-areas h2 {{
     font-size: 1.35em; font-weight: 800; color: #111827;
     border-bottom: 2px solid #c4b5fd; padding-bottom: 10px;
     margin-top: 40px; margin-bottom: 16px;
   }}
   .f-wrap h3 {{ font-size: 1.1em; font-weight: 700; color: #374151; margin-top: 24px; }}
-  .f-zodiac-list {{ display: grid; gap: 12px; margin: 20px 0 28px; }}
+  .f-zodiac-list {{ display: flex; flex-direction: column; gap: 12px; margin: 20px 0 28px; }}
   .f-z-card {{
+    width: 100%; box-sizing: border-box;
     background: #fafafa; border: 1px solid #e5e7eb; border-radius: 12px;
     padding: 14px 16px; border-left: 4px solid #8b5cf6;
   }}
   .f-z-card h3 {{ margin: 0 0 6px; color: #5b21b6; font-size: 1.08em; }}
   .f-keyword {{ margin: 0 0 8px; font-weight: 700; color: #db2777; font-size: 0.92em; }}
-  .f-z-card p {{ margin: 0; color: #4b5563; font-size: 0.95em; }}
+  .f-z-card p {{ margin: 0; color: #4b5563; font-size: 0.95em; line-height: 1.75; }}
   .f-cta {{
     background: linear-gradient(135deg, #4c1d95 0%, #9d174d 100%);
     color: #fdf4ff; border-radius: 14px; padding: 22px 20px; margin: 40px 0 18px;

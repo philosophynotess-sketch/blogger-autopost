@@ -8,16 +8,13 @@ def test_cta_with_url_has_link():
     assert "운세한잔" in html
 
 
-def test_cta_without_url_is_coming_soon():
-    html = render_cta("운세 앱", "")
-    assert "준비 중" in html
-    assert "href=" not in html
-    assert "운세 앱" in html
-    assert "북마크" not in html
-    assert "곧 선보일" not in html
+def test_cta_without_url_is_hidden():
+    html = render_cta("운세 인사이트", "")
+    assert html == ""
+    assert "준비 중" not in html
 
 
 def test_cta_escapes_html():
-    html = render_cta('<script>x</script>', "https://x.test")
+    html = render_cta("<script>x</script>", "https://x.test")
     assert "<script>" not in html
     assert "&lt;script&gt;" in html

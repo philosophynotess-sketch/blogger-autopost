@@ -138,18 +138,23 @@ def build_prompt(slot: PostSlot) -> tuple[str, str]:
 
 <section class="f-timeline">
   <h2>시간대별 흐름</h2>
-  <div class="f-grid">
+  <!-- 반드시 세로 스택(위→아래). 한 줄에 여러 카드 나란히 배치 금지 -->
+  <div class="f-stack">
     <div class="f-card"><h3>오전</h3><p>3~4문장. 업무·학습 시작, 커뮤니케이션 팁.</p></div>
     <div class="f-card"><h3>오후</h3><p>3~4문장. 회의·협업·집중 구간.</p></div>
     <div class="f-card"><h3>저녁</h3><p>3~4문장. 관계·휴식·정리.</p></div>
   </div>
 </section>
 
-<section class="f-grid">
-  <div class="f-card"><h3>애정</h3><p>4문장 이상. 연애/가족/친구 중 구체 상황 포함.</p></div>
-  <div class="f-card"><h3>금전</h3><p>4문장 이상. 소비·계약·충동구매 등 태도 중심 (수익 보장 금지).</p></div>
-  <div class="f-card"><h3>건강</h3><p>4문장 이상. 수면·스트레칭·페이스 등 생활 습관 수준.</p></div>
-  <div class="f-card"><h3>직장·학업</h3><p>4문장 이상. 회의, 마감, 협업, 발표 등 구체 장면.</p></div>
+<section class="f-areas">
+  <h2>영역별 운세</h2>
+  <!-- 애정 → 금전 → 건강 → 직장·학업 순서, 세로 스택 풀폭 카드 -->
+  <div class="f-stack">
+    <div class="f-card"><h3>애정</h3><p>4문장 이상. 연애/가족/친구 중 구체 상황 포함.</p></div>
+    <div class="f-card"><h3>금전</h3><p>4문장 이상. 소비·계약·충동구매 등 태도 중심 (수익 보장 금지).</p></div>
+    <div class="f-card"><h3>건강</h3><p>4문장 이상. 수면·스트레칭·페이스 등 생활 습관 수준.</p></div>
+    <div class="f-card"><h3>직장·학업</h3><p>4문장 이상. 회의, 마감, 협업, 발표 등 구체 장면.</p></div>
+  </div>
 </section>
 
 <section class="f-lucky">
