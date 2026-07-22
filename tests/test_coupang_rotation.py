@@ -22,9 +22,12 @@ def test_links_unique_loaded():
 def test_one_full_cycle_uses_each_link_once():
     links = load_coupang_links()
     n = len(links)
-    start = date(2026, 7, 24)
+    # Align to the start of a rotation round (ordinal % n == 0)
+    base = date(2026, 7, 24).toordinal()
+    start = date.fromordinal(base - (base % n))
     picked = [pick_coupang_link(start + timedelta(days=i), links) for i in range(n)]
     assert sorted(picked) == sorted(links)
+    assert len(set(picked)) == n
 
 
 def test_same_date_stable():
