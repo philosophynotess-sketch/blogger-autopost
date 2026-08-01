@@ -1,4 +1,4 @@
-"""Generate 운세 인사이트 brand logo assets into docs/brand/."""
+"""Generate 운세 인사이트 brand assets using the preferred AI mark as the official symbol."""
 
 from __future__ import annotations
 
@@ -7,13 +7,14 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 OUT = Path(__file__).resolve().parent
+AI_MARK = OUT / "logo-mark-ai-concept.jpg"
 
 VIOLET = (124, 58, 237)
 DEEP = (76, 29, 149)
 PINK = (219, 39, 119)
 INK = (31, 41, 55)
-CREAM = (250, 245, 255)
 WHITE = (255, 255, 255)
+SOFT = (250, 245, 255)
 
 FONT_REG = "C:/Windows/Fonts/malgun.ttf"
 FONT_BD = "C:/Windows/Fonts/malgunbd.ttf"
@@ -27,72 +28,49 @@ def rounded_rect(draw: ImageDraw.ImageDraw, xy, r, fill) -> None:
     draw.rounded_rectangle(xy, radius=r, fill=fill)
 
 
-def draw_moon_mark(
-    d: ImageDraw.ImageDraw,
-    cx: int,
-    cy: int,
-    scale: float,
-    fill_bg: tuple,
-    cream: tuple = CREAM + (255,),
-) -> None:
-    """Crescent + spark mark centered at cx, cy."""
-    s = scale
-    d.ellipse(
-        [cx - int(80 * s), cy - int(100 * s), cx + int(70 * s), cy + int(100 * s)],
-        fill=cream,
-    )
-    d.ellipse(
-        [cx - int(30 * s), cy - int(110 * s), cx + int(110 * s), cy + int(90 * s)],
-        fill=fill_bg,
-    )
-    sparks = [
-        (cx + int(75 * s), cy - int(55 * s), int(14 * s)),
-        (cx + int(100 * s), cy - int(15 * s), int(9 * s)),
-        (cx + int(72 * s), cy + int(25 * s), int(7 * s)),
-    ]
-    for ox, oy, rad in sparks:
-        d.ellipse([ox - rad, oy - rad, ox + rad, oy + rad], fill=WHITE + (245,))
+def load_ai_mark() -> Image.Image:
+    if not AI_MARK.exists():
+        raise FileNotFoundError(f"Missing preferred mark: {AI_MARK}")
+    return Image.open(AI_MARK).convert("RGBA")
 
 
-def gradient_circle(
-    d: ImageDraw.ImageDraw, icon_x: int, icon_y: int, icon_size: int
-) -> tuple[int, int, int]:
-    last = VIOLET
-    for i in range(icon_size // 2, 0, -1):
-        t = i / (icon_size / 2)
-        r = int(DEEP[0] * (1 - t) + VIOLET[0] * t)
-        g = int(DEEP[1] * (1 - t) + VIOLET[1] * t)
-        b = int(DEEP[2] * (1 - t) + VIOLET[2] * t)
-        last = (r, g, b)
-        d.ellipse(
-            [
-                icon_x + icon_size // 2 - i,
-                icon_y + icon_size // 2 - i,
-                icon_x + icon_size // 2 + i,
-                icon_y + icon_size // 2 + i,
-            ],
-            fill=(r, g, b, 255),
-        )
-    return last
+def fit_mark(mark: Image.Image, size: int) -> Image.Image:
+    return mark.resize((size, size), Image.Resampling.LANCZOS)
 
 
-def make_primary_horizontal() -> Path:
+def make_mark_exports(mark: Image.Image) -> list[Path]:
+    paths: list[Path] = []
+    # Official mark = AI concept at full res
+    primary = OUT / "logo-mark.png"
+    mark.save(primary, "PNG")
+    paths.append(primary)
+
+    for s, name in [
+        (512, "logo-mark-512.png"),
+        (192, "logo-mark-192.png"),
+        (64, "favicon-64.png"),
+    ]:
+        p = OUT / name
+        fit_mark(mark, s).save(p, "PNG")
+        paths.append(p)
+    return paths
+
+
+def make_primary_horizontal(mark: Image.Image) -> Path:
     w, h = 1600, 480
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
 
-    icon_size = 280
-    icon_x, icon_y = 60, (h - icon_size) // 2
-    fill = gradient_circle(d, icon_x, icon_y, icon_size)
-    cx = icon_x + icon_size // 2
-    cy = icon_y + icon_size // 2
-    draw_moon_mark(d, cx, cy, 0.7, fill + (255,))
+    icon_size = 300
+    icon = fit_mark(mark, icon_size)
+    icon_x, icon_y = 40, (h - icon_size) // 2
+    img.paste(icon, (icon_x, icon_y), icon)
 
     title_font = load(FONT_BD, 96)
     sub_font = load(FONT_REG, 36)
     tag_font = load(FONT_REG, 26)
     title = "운세 인사이트"
-    tx = icon_x + icon_size + 48
+    tx = icon_x + icon_size + 40
     ty = h // 2 - 70
     d.text((tx, ty), title, font=title_font, fill=DEEP + (255,))
     bbox = d.textbbox((tx, ty), title, font=title_font)
@@ -102,7 +80,7 @@ def make_primary_horizontal() -> Path:
     d.text((tx, bbox[3] + 36), "UNSE INSIGHT", font=sub_font, fill=VIOLET + (255,))
     d.text(
         (tx, bbox[3] + 90),
-        "하루를 읽는 운세 정보 미디어",
+        "하루를 읽는 운세 정보 미디어 · unseinsight.blogspot.com",
         font=tag_font,
         fill=INK + (200,),
     )
@@ -112,26 +90,21 @@ def make_primary_horizontal() -> Path:
     return path
 
 
-def make_primary_dark() -> Path:
+def make_primary_dark(mark: Image.Image) -> Path:
     w, h = 1600, 480
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     rounded_rect(d, [20, 20, w - 20, h - 20], 40, DEEP + (255,))
 
-    icon_size = 240
-    icon_x, icon_y = 80, (h - icon_size) // 2
-    d.ellipse(
-        [icon_x, icon_y, icon_x + icon_size, icon_y + icon_size],
-        fill=VIOLET + (255,),
-    )
-    cx = icon_x + icon_size // 2
-    cy = icon_y + icon_size // 2
-    draw_moon_mark(d, cx, cy, 0.6, VIOLET + (255,))
+    icon_size = 260
+    icon = fit_mark(mark, icon_size)
+    icon_x, icon_y = 70, (h - icon_size) // 2
+    img.paste(icon, (icon_x, icon_y), icon)
 
     title_font = load(FONT_BD, 92)
     sub_font = load(FONT_REG, 34)
-    tx = icon_x + icon_size + 48
-    ty = h // 2 - 60
+    tx = icon_x + icon_size + 40
+    ty = h // 2 - 55
     d.text((tx, ty), "운세 인사이트", font=title_font, fill=WHITE + (255,))
     bbox = d.textbbox((tx, ty), "운세 인사이트", font=title_font)
     d.rounded_rectangle(
@@ -149,18 +122,16 @@ def make_primary_dark() -> Path:
     return path
 
 
-def make_stacked() -> Path:
-    w, h = 1000, 1100
+def make_stacked(mark: Image.Image) -> Path:
+    w, h = 1000, 1200
     img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
 
-    icon_size = 420
+    icon_size = 520
+    icon = fit_mark(mark, icon_size)
     icon_x = (w - icon_size) // 2
-    icon_y = 80
-    fill = gradient_circle(d, icon_x, icon_y, icon_size)
-    cx = icon_x + icon_size // 2
-    cy = icon_y + icon_size // 2
-    draw_moon_mark(d, cx, cy, 1.0, fill + (255,))
+    icon_y = 60
+    img.paste(icon, (icon_x, icon_y), icon)
 
     title_font = load(FONT_BD, 88)
     sub_font = load(FONT_REG, 34)
@@ -168,7 +139,7 @@ def make_stacked() -> Path:
     bbox = d.textbbox((0, 0), title, font=title_font)
     tw = bbox[2] - bbox[0]
     tx = (w - tw) // 2
-    ty = icon_y + icon_size + 48
+    ty = icon_y + icon_size + 36
     d.text((tx, ty), title, font=title_font, fill=DEEP + (255,))
     bbox2 = d.textbbox((tx, ty), title, font=title_font)
     line_w = 120
@@ -185,51 +156,33 @@ def make_stacked() -> Path:
         font=sub_font,
         fill=VIOLET + (255,),
     )
+    tag = "unseinsight.blogspot.com"
+    tag_font = load(FONT_REG, 28)
+    tb = d.textbbox((0, 0), tag, font=tag_font)
+    d.text(
+        ((w - (tb[2] - tb[0])) // 2, bbox2[3] + 100),
+        tag,
+        font=tag_font,
+        fill=INK + (180,),
+    )
 
     path = OUT / "logo-stacked.png"
     img.save(path, "PNG")
     return path
 
 
-def make_mark_only() -> Path:
-    size = 1024
-    img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    d = ImageDraw.Draw(img)
-    pad = 48
-    last = VIOLET
-    for i in range((size - 2 * pad) // 2, 0, -1):
-        t = i / ((size - 2 * pad) / 2)
-        r = int(DEEP[0] * (1 - t) + VIOLET[0] * t)
-        g = int(DEEP[1] * (1 - t) + VIOLET[1] * t)
-        b = int(DEEP[2] * (1 - t) + VIOLET[2] * t)
-        last = (r, g, b)
-        cx = cy = size // 2
-        d.ellipse([cx - i, cy - i, cx + i, cy + i], fill=(r, g, b, 255))
-    cx = cy = size // 2
-    draw_moon_mark(d, cx, cy, 2.0, last + (255,))
-
-    path = OUT / "logo-mark.png"
-    img.save(path, "PNG")
-    for s, name in [
-        (512, "logo-mark-512.png"),
-        (192, "logo-mark-192.png"),
-        (64, "favicon-64.png"),
-    ]:
-        img.resize((s, s), Image.Resampling.LANCZOS).save(OUT / name, "PNG")
-    return path
-
-
-def make_social_avatar() -> Path:
+def make_social_avatar(mark: Image.Image) -> Path:
     size = 1080
     img = Image.new("RGBA", (size, size), DEEP + (255,))
     d = ImageDraw.Draw(img)
-    # outer ring only in upper area; solid field below for clean type
-    d.ellipse([90, 40, size - 90, size - 200], outline=VIOLET + (255,), width=28)
-    d.ellipse([130, 80, size - 130, size - 240], fill=DEEP + (255,))
-    # fill remaining bottom so type sits on solid brand color
-    d.rectangle([0, size - 260, size, size], fill=DEEP + (255,))
-    cx, cy = size // 2, size // 2 - 90
-    draw_moon_mark(d, cx, cy, 1.45, DEEP + (255,))
+
+    # soft light panel for the mark (matches AI soft UI look)
+    panel = 620
+    px = (size - panel) // 2
+    py = 90
+    rounded_rect(d, [px, py, px + panel, py + panel], 96, SOFT + (255,))
+    icon = fit_mark(mark, 540)
+    img.paste(icon, ((size - 540) // 2, py + 40), icon)
 
     title_font = load(FONT_BD, 68)
     sub_font = load(FONT_REG, 26)
@@ -255,14 +208,31 @@ def make_social_avatar() -> Path:
     return path
 
 
+def make_social_avatar_mark_only(mark: Image.Image) -> Path:
+    """Clean square avatar: soft mark on deep purple (no text)."""
+    size = 1080
+    img = Image.new("RGBA", (size, size), DEEP + (255,))
+    d = ImageDraw.Draw(img)
+    panel = 780
+    px = (size - panel) // 2
+    py = (size - panel) // 2
+    rounded_rect(d, [px, py, px + panel, py + panel], 120, SOFT + (255,))
+    icon = fit_mark(mark, 680)
+    img.paste(icon, ((size - 680) // 2, (size - 680) // 2), icon)
+    path = OUT / "logo-avatar-mark.png"
+    img.save(path, "PNG")
+    return path
+
+
 def main() -> None:
-    paths = [
-        make_primary_horizontal(),
-        make_primary_dark(),
-        make_stacked(),
-        make_mark_only(),
-        make_social_avatar(),
-    ]
+    mark = load_ai_mark()
+    paths: list[Path] = []
+    paths.extend(make_mark_exports(mark))
+    paths.append(make_primary_horizontal(mark))
+    paths.append(make_primary_dark(mark))
+    paths.append(make_stacked(mark))
+    paths.append(make_social_avatar(mark))
+    paths.append(make_social_avatar_mark_only(mark))
     for p in paths:
         print(p)
 

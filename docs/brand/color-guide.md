@@ -1,40 +1,56 @@
-# 운세 인사이트 브랜드 컬러 가이드
+# 운세 인사이트 브랜드 가이드
 
 **블로그:** https://unseinsight.blogspot.com/  
 **영문:** UNSE INSIGHT
 
+## 공식 마크
+
+**메인 심볼:** `logo-mark-ai-concept.jpg` (원본 컨셉)  
+→ 실제 배포용 복사본: `logo-mark.png` 및 리사이즈 세트
+
+컨셉: **초승달 + 펼친 책(인사이트) + 스파클**  
+정보형 운세 미디어 / “읽다”는 인사이트 브랜드에 맞춤.
+
 ## 컬러
 
-| 이름 | HEX | RGB | 용도 |
-|------|-----|-----|------|
-| Violet | `#7C3AED` | 124, 58, 237 | 메인 액센트, 버튼, 링크 |
-| Deep Purple | `#4C1D95` | 76, 29, 149 | 워드마크, 다크 배경, 헤더 |
-| Pink | `#DB2777` | 219, 39, 119 | 포인트 라인, 강조 |
-| Ink | `#1F2937` | 31, 41, 55 | 본문 텍스트 |
-| Cream | `#FAF5FF` | 250, 245, 255 | 라이트 배경, 아이콘 내부 |
+| 이름 | HEX | 용도 |
+|------|-----|------|
+| Violet | `#7C3AED` | 액센트, 영문 워드 |
+| Deep Purple | `#4C1D95` | 워드마크, 다크 배경 |
+| Pink | `#DB2777` | 포인트 라인 |
+| Soft Lilac | 마크 내부 라벤더 | 아이콘 본문 |
+| Cream/Soft | `#FAF5FF` | 마크 배경 패널 |
+| Ink | `#1F2937` | 보조 텍스트 |
 
-## 로고 파일
+## 파일 맵
 
 | 파일 | 용도 |
 |------|------|
-| `logo-primary.png` | 가로형 기본 (투명 배경) |
+| `logo-mark-ai-concept.jpg` | **공식 마크 원본 (최애)** |
+| `logo-mark.png` | 공식 마크 PNG |
+| `logo-mark-512.png` / `192` | 앱·SNS 아이콘 |
+| `favicon-64.png` | 파비콘 |
+| `logo-primary.png` | 가로 워드마크 (마크+한글) |
 | `logo-primary-dark.png` | 다크 배경용 가로형 |
-| `logo-stacked.png` | 세로 스택 (프로필·포스터) |
-| `logo-mark.png` | 심볼만 (1024) |
-| `logo-mark-512.png` / `192` | 앱·파비콘 후보 |
-| `favicon-64.png` | 작은 아이콘 |
-| `logo-avatar-instagram.png` | 인스타/스레드 프로필 정사각 |
-| `logo-mark-ai-concept.jpg` | AI 생성 컨셉 마크 (참고용) |
+| `logo-stacked.png` | 세로 스택 |
+| `logo-avatar-instagram.png` | 프로필(이름+URL) |
+| `logo-avatar-mark.png` | 프로필(마크만, 추천) |
 
-## 사용 규칙
+## 사용 추천
 
-- 소셜·카드뉴스: 심볼 + 「운세 인사이트」 조합 우선
-- 링크 표기: `unseinsight.blogspot.com` (https 생략 가능)
-- 로고 비율 왜곡 금지, 최소 여백은 심볼 높이의 약 20%
-- 과한 금색·별똥별·공포 톤 지양 (정보 미디어 톤 유지)
+| 채널 | 추천 파일 |
+|------|-----------|
+| 인스타/스레드 프로필 | `logo-avatar-mark.png` 또는 `logo-mark-512.png` |
+| 카드뉴스 코너 | `logo-mark.png` 작게 |
+| 블로그 헤더 | `logo-primary.png` |
+| 다크 썸네일 | `logo-primary-dark.png` |
 
 ## 재생성
+
+마크 원본을 유지한 채 워드마크만 다시 뽑을 때:
 
 ```bash
 python docs/brand/generate_logos.py
 ```
+
+`logo-mark-ai-concept.jpg` 를 바꾸면 전체가 그 심볼 기준으로 다시 합성됩니다.
