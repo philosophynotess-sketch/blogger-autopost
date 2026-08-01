@@ -36,14 +36,27 @@
 | `logo-avatar-instagram.png` | 프로필(이름+URL) |
 | `logo-avatar-mark.png` | 프로필(마크만, 추천) |
 
+## 채널별 폴더 (프로필·커버)
+
+상세: `README-channels.md`
+
+| 폴더 | 주요 파일 |
+|------|-----------|
+| `facebook/` | `profile-960.png`, **`cover-1640x624.png`** |
+| `instagram/` | `profile-1080.png` |
+| `blogger/` | `profile-512.png` |
+| `reels/` | `profile-1080.png` (인스타 계정과 동일) |
+
 ## 사용 추천
 
 | 채널 | 추천 파일 |
 |------|-----------|
-| 인스타/스레드 프로필 | `logo-avatar-mark.png` 또는 `logo-mark-512.png` |
+| 인스타/스레드 프로필 | `instagram/profile-1080.png` |
+| 페북 프로필 | `facebook/profile-960.png` |
+| 페북 커버 | `facebook/cover-1640x624.png` |
+| 블로거 | `blogger/profile-512.png` |
 | 카드뉴스 코너 | `logo-mark.png` 작게 |
 | 블로그 헤더 | `logo-primary.png` |
-| 다크 썸네일 | `logo-primary-dark.png` |
 
 ## 재생성
 
