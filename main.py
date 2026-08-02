@@ -11,8 +11,10 @@ from content.generators import generate_post
 from content.schedule import resolve_slot
 from publish.blogger import publish_post
 from publish.images import generate_and_upload_image
+from publish.meta_publish import try_publish_social_folder
 from render.affiliate import inject_mid_affiliate, render_affiliate_mid
 from render.templates import render_post_html
+from social.pipeline import generate_social_assets
 
 
 def run() -> int:
@@ -71,6 +73,16 @@ def run() -> int:
     print(f"📝 본문 길이: {len(body_with_mid)} chars")
     print(f"🛒 쿠팡 중간: {mid_url}")
     print(f"🛒 쿠팡 하단: {footer_url}")
+
+    # SNS cards + captions (app deep-link later; blog URL for now)
+    social_dir = None
+    try:
+        social_dir = generate_social_assets(
+            settings, slot, post.body_html, blog_url="https://unseinsight.blogspot.com/"
+        )
+        try_publish_social_folder(social_dir)
+    except Exception as e:
+        print(f"⚠️ 소셜 에셋 단계 오류(블로그 발행은 계속): {e}")
 
     if settings.dry_run:
         print("🧪 DRY_RUN=1 — Blogger 발행 생략")

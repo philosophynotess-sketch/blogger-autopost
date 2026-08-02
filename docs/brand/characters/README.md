@@ -1,26 +1,37 @@
 # 운세 인사이트 캐릭터 에셋
 
-벤치마크(ForceTeller류)와 **비슷한 귀여운 아이콘 톤**이지만, 저작권상 **오리지널 생성 에셋**입니다.
+벤치마크와 **비슷한 귀여운 톤**, 저작권상 **오리지널** 생성.
+
+## 옵션 팩 (6종)
+
+| 폴더 | 스타일 |
+|------|--------|
+| `options/option-00-classic` | 클래식 |
+| `options/option-01-candy` | 캔디 카와이 (**기본**) |
+| `options/option-02-clay` | 클레이 토이 |
+| `options/option-03-minimal` | 미니멀 이모지 |
+| `options/option-04-lavender` | 라벤더 드림 |
+| `options/option-05-comic` | 코믹 치비 |
+
+```bash
+python -m social.activate_pack --list
+python -m social.activate_pack option-04-lavender
+python -m social.generate_pack_previews   # docs/social/pack-previews/
+```
+
+활성 팩은 `animals/` · `stars/` 에 복사되고 `active_pack.json` 에 기록됩니다.
 
 ## 구조
 
 ```
 characters/
-  sheets/
-    animals-sheet.jpg   # 12띠 원본 시트
-    stars-sheet.jpg     # 12별자리 원본 시트
-  animals/
-    rat.png … pig.png   # 512×512 개별
-  stars/
-    aries.png … pisces.png
+  active_pack.json
+  animals/  stars/          # 현재 활성
+  options/option-0X-*/
+    animals/ stars/ sheets/ meta.json
 ```
-
-## 용도
-
-- SNS 띠별/별자리 **전체표 카드**
-- 추후 앱(`saas-template` / FortuneOne) 아이콘·UI 공유 가능
 
 ## 주의
 
-- 벤치 이미지의 캐릭터를 트레이싱·복제하지 말 것
-- 시트 재생성 시 `social/characters.py` 키 순서와 맞춰 분할
+- 벤치 캐릭터 복제 금지
+- 앱 연동은 나중 (에셋만 재사용 가능)

@@ -219,3 +219,60 @@ def sample_lines_stars() -> list[str]:
         "사람 연결과 아이디어가 반짝",
         "감성 충전 후 결정해도 늦지 않음",
     ]
+
+
+def render_daily_carousel(
+    post_date: date,
+    slides: list[dict[str, str]],
+    *,
+    out_dir: Path,
+    size: tuple[int, int] = (1080, 1080),
+) -> list[str]:
+    """Simple 1~3 square slides for daily/SEO posts. Returns saved filenames."""
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    w, h = size
+    names: list[str] = []
+    title_font = _font(FONT_BD, 56)
+    body_font = _font(FONT_BD, 42)
+    sub_font = _font(FONT_REG, 28)
+
+    for i, slide in enumerate(slides[:5], start=1):
+        img = Image.new("RGB", (w, h), SOFT)
+        d = ImageDraw.Draw(img)
+        # soft frame
+        d.rounded_rectangle([48, 48, w - 48, h - 48], radius=36, fill=BG)
+        title = slide.get("title", "")
+        body = slide.get("body", "")
+        sub = slide.get("sub", "")
+
+        ty = 180
+        for line in title.split("\n"):
+            tw = d.textlength(line, font=title_font)
+            d.text(((w - tw) / 2, ty), line, font=title_font, fill=DEEP)
+            ty += 70
+        ty += 30
+        for line in body.split("\n"):
+            bw = d.textlength(line, font=body_font)
+            d.text(((w - bw) / 2, ty), line, font=body_font, fill=VIOLET)
+            ty += 58
+        ty += 24
+        for line in sub.split("\n"):
+            sw = d.textlength(line, font=sub_font)
+            d.text(((w - sw) / 2, ty), line, font=sub_font, fill=MUTED)
+            ty += 40
+
+        if MARK_PATH.exists():
+            mark = Image.open(MARK_PATH).convert("RGBA").resize((72, 72), Image.Resampling.LANCZOS)
+            img.paste(mark, ((w - 72) // 2, h - 160), mark)
+        d.text(
+            ((w - d.textlength("운세 인사이트", font=sub_font)) / 2, h - 80),
+            "운세 인사이트",
+            font=sub_font,
+            fill=DEEP,
+        )
+
+        name = f"carousel-{i:02d}.png"
+        img.save(out_dir / name, "PNG", optimize=True)
+        names.append(name)
+    return names
