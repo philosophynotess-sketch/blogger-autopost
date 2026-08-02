@@ -7,12 +7,12 @@
 | 폴더 | 스타일 |
 |------|--------|
 | `options/option-00-classic` | 클래식 |
-| `options/option-01-candy` | 캔디 카와이 (**기본**) |
+| `options/option-01-candy` | 캔디 카와이 |
 | `options/option-02-clay` | 클레이 토이 |
 | `options/option-03-minimal` | 미니멀 이모지 |
-| `options/option-04-lavender` | 라벤더 드림 |
-| `options/option-05-comic` | 코믹 치비 |
-
+| `options/option-04-lavender` | 라벤더 드림 (별자리 소스) |
+| `options/option-05-comic` | 코믹 치비 (띠 소스) |
+| **`options/option-fixed-hybrid`** | **픽스 기본: 띠=코믹(05) + 별=라벤더(04)** |
 ```bash
 python -m social.activate_pack --list
 python -m social.activate_pack option-04-lavender

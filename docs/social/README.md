@@ -7,12 +7,12 @@
 | ID | 이름 | 설명 |
 |----|------|------|
 | `option-00-classic` | 클래식 | 첫 생성 세트 |
-| `option-01-candy` | 캔디 카와이 | **기본 활성** · 반짝 파스텔 |
+| `option-01-candy` | 캔디 카와이 | 반짝 파스텔 |
 | `option-02-clay` | 클레이 토이 | 말랑 3D |
 | `option-03-minimal` | 미니멀 이모지 | 심플 플랫 |
-| `option-04-lavender` | 라벤더 드림 | 보라 브랜드 톤 |
-| `option-05-comic` | 코믹 치비 | 액세서리·표정 |
-
+| `option-04-lavender` | 라벤더 드림 | 별자리 픽 소스 |
+| `option-05-comic` | 코믹 치비 | 띠 픽 소스 |
+| **`option-fixed-hybrid`** | **픽스** | **띠=코믹 + 별=라벤더 (기본 활성)** |
 ### 팩 목록 / 전환
 
 ```bash
